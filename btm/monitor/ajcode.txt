@@ -1,0 +1,33 @@
+    // Implement your code here.
+    pointcut twoPhaseCommit_startTx() : (execution(* Transaction.commit(..))) && MOP_CommonPointCut();
+    before () : twoPhaseCommit_startTx() {
+        twoPhaseCommitRuntimeMonitor.twoPhaseCommit_startTxEvent();
+    }
+
+    pointcut twoPhaseCommit_addParticipant() : (execution(* Transaction.enlistResource(..))) && MOP_CommonPointCut();
+    after () : twoPhaseCommit_addParticipant() {
+        twoPhaseCommitRuntimeMonitor.twoPhaseCommit_addParticipantEvent();
+    }
+
+    pointcut twoPhaseCommit_prepare() : (execution(* XAResource.prepare(..))) && MOP_CommonPointCut();
+    after () returning : twoPhaseCommit_prepare() {
+        twoPhaseCommitRuntimeMonitor.twoPhaseCommit_prepareSuccessEvent();
+    }
+
+    after () throwing : twoPhaseCommit_prepare() {
+        twoPhaseCommitRuntimeMonitor.twoPhaseCommit_prepareFailureEvent();
+    }
+
+    pointcut twoPhaseCommit_rollbackSuccess() : (execution(* XAResource.rollback(..))) && MOP_CommonPointCut();
+    after () : twoPhaseCommit_rollbackSuccess() {
+        twoPhaseCommitRuntimeMonitor.twoPhaseCommit_rollbackSuccessEvent();
+    }
+
+    pointcut twoPhaseCommit_commitSuccess() : (execution(* XAResource.commit(..))) && MOP_CommonPointCut();
+    after () : twoPhaseCommit_commitSuccess() {
+        twoPhaseCommitRuntimeMonitor.twoPhaseCommit_commitSuccessEvent();
+    }
+
+    after () : twoPhaseCommit_startTx() {
+        twoPhaseCommitRuntimeMonitor.twoPhaseCommit_endTxEvent();
+    }

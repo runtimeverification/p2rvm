@@ -1,0 +1,6 @@
+[submodule "ext/rv-monitor"]
+	path = ext/rv-monitor
+	url = https://github.com/runtimeverification/rv-monitor.git
+[submodule "ext/P"]
+	path = ext/P
+	url = https://github.com/p-org/P.git
