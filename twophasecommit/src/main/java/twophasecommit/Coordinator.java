@@ -13,15 +13,15 @@ public class Coordinator {
 
     public void commit(boolean isBuggy) {
         try {
-            System.out.println("Prepare Phase.");
+            System.out.println("[System] Prepare Phase.");
             preparePhase(isBuggy);
         } catch (RollbackException e) {
-            System.out.println("Rollback Phase.");
+            System.out.println("[System] Rollback Phase.");
             rollbackPhase();
             return;
         }
 
-        System.out.println("Commit Phase.");
+        System.out.println("[System] Commit Phase.");
         commitPhase();
     }
 

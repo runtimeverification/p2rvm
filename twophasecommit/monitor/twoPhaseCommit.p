@@ -55,7 +55,7 @@ spec twoPhaseCommit observes addParticipant, startTx, prepareSuccess, prepareFai
 
         on endTx do {
             assert (rolledbackNum == participantNum), "Rollback failed.";
-            print "RolledBack.";
+            print "[Monitor] RolledBack.";
         }
     }
 
@@ -66,7 +66,7 @@ spec twoPhaseCommit observes addParticipant, startTx, prepareSuccess, prepareFai
 
         on endTx do {
             assert (committedNum == participantNum), "Commit failed.";
-            print "Committed.";
+            print "[Monitor] Committed.";
         }
     }
 }

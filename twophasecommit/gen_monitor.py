@@ -49,7 +49,7 @@ def runMonitor(rvmonitor_bin, gen_monitor_dir, java_dir):
     if len(rvm_file_paths) != 1:
         raise Exception("Expected a single rvm spec")
     rvm_file_path = rvm_file_paths[0]
-    tools.runNoError([monitor_binary, "-merge", rvm_file_path])
+    tools.runNoError([monitor_binary, "-merge", "--controlAPI", rvm_file_path])
     for f in glob.glob(os.path.join(gen_monitor_dir, "*.java")):
         shutil.copy(f, java_dir)
 
