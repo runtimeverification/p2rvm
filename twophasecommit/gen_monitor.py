@@ -19,7 +19,7 @@ def writeFile(name, contents):
         f.write(contents)
 
 def runPc(pcompiler_dir, arguments):
-    tools.runNoError(["dotnet", os.path.join(pcompiler_dir, "Bld", "Drops", "Release", "Binaries", "Pc.dll")] + arguments)
+    tools.runNoError(["dotnet", os.path.join(pcompiler_dir, "Bld", "Drops", "Release", "Binaries", "netcoreapp3.1", "P.dll")] + arguments)
 
 def translate(pcompiler_dir, p_spec_dir, gen_monitor_dir):
     tools.progress("Run the PCompiler...")
