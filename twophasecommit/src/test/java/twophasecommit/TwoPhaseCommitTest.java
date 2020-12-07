@@ -11,11 +11,13 @@ public class TwoPhaseCommitTest {
         System.out.println("=== testPrepareSuccess ===");
         // Comment out the following line to disable monitor.
         twoPhaseCommitRuntimeMonitor.enable();
+        twoPhaseCommit2RuntimeMonitor.enable();
         Coordinator co = new Coordinator();
         co.addParticipant(new Participant(0, true));
         co.addParticipant(new Participant(1, true));
         co.commit(false);
         twoPhaseCommitRuntimeMonitor.resetMonitor();
+        twoPhaseCommit2RuntimeMonitor.resetMonitor();
     }
 
     @Test
@@ -23,11 +25,13 @@ public class TwoPhaseCommitTest {
         System.out.println("=== testPrepareFailure ===");
         // Comment out the following line to disable monitor.
         twoPhaseCommitRuntimeMonitor.enable();
+        twoPhaseCommit2RuntimeMonitor.enable();
         Coordinator co = new Coordinator();
         co.addParticipant(new Participant(0, true));
         co.addParticipant(new Participant(1, false));
         co.commit(false);
         twoPhaseCommitRuntimeMonitor.resetMonitor();
+        twoPhaseCommit2RuntimeMonitor.resetMonitor();
     }
 
 }
