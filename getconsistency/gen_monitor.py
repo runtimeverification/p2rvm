@@ -23,40 +23,30 @@ def runPc(pcompiler_dir, arguments):
 
 def translate(pcompiler_dir, p_spec_dir, gen_monitor_dir):
     tools.progress("Run the PCompiler...")
-    p_spec_paths = glob.glob(os.path.join(p_spec_dir, "*.p"))
-    if len(p_spec_paths) != 1:
-        raise Exception("Expected a single p spec")
-    p_spec_path = p_spec_paths[0]
-    runPc(pcompiler_dir, [p_spec_path, "-g:RVM", "-o:%s" % gen_monitor_dir])
+    p_specs = glob.glob(os.path.join(p_spec_dir, "*.p"))
+    runPc(pcompiler_dir, p_specs + ["-g:RVM", "-o:%s" % gen_monitor_dir])
 
-def fillAspect(aspectj_dir, gen_monitor_dir):
-    tools.progress("Fill in AspectJ template")
-    aspect_file_paths = glob.glob(os.path.join(gen_monitor_dir, "*.aj"))
-    if len(aspect_file_paths) != 1:
-        raise Exception("Expected a single aspectJ template")
-    aspect_file_path = aspect_file_paths[0]
-    aspectContent = readFile(aspect_file_path)
-    aspectContent = aspectContent.replace("// add your own imports.", readFile("import.txt"))
-    aspectContent = aspectContent.replace("// Implement your code here.", readFile("ajcode.txt"))
-    writeFile(aspect_file_path, aspectContent)
-    for f in glob.glob(os.path.join(gen_monitor_dir, "*.aj")):
-        shutil.copy(f, aspectj_dir)
-
-def runMonitor(rvmonitor_bin, gen_monitor_dir, java_dir):
+def runMonitor(rvmonitor_bin, generated_file_dir):
     tools.progress("Run RVMonitor")
     monitor_binary = os.path.join(rvmonitor_bin, "rv-monitor")
-    rvm_file_paths = glob.glob(os.path.join(gen_monitor_dir, "*.rvm"))
-    if len(rvm_file_paths) != 1:
-        raise Exception("Expected a single rvm spec")
-    rvm_file_path = rvm_file_paths[0]
-    tools.runNoError([monitor_binary, "-merge", rvm_file_path])
-    for f in glob.glob(os.path.join(gen_monitor_dir, "*.java")):
-        shutil.copy(f, java_dir)
+    rvm_files = glob.glob(os.path.join(generated_file_dir, "*.rvm"))
+    for rvm_file in rvm_files:
+        tools.runNoError([monitor_binary, "-merge", rvm_file])
 
-def build(pcompiler_dir, gen_monitor_dir, rvmonitor_bin, p_spec_dir, aspectj_dir, java_dir):
-    translate(pcompiler_dir, p_spec_dir, gen_monitor_dir)
-    fillAspect(aspectj_dir, gen_monitor_dir)
-    runMonitor(rvmonitor_bin, gen_monitor_dir, java_dir)
+def copyDep(dep_dir, generated_file_dir):
+    tools.progress("Copy Dep")
+    for f in glob.glob(os.path.join(dep_dir, "*.java")):
+        shutil.copy(f, generated_file_dir)
+
+def compileJava(generated_file_dir):
+    java_files = glob.glob(os.path.join(generated_file_dir, "*.java"))
+    tools.runNoError(["javac"] + java_files + ["-d", "./"])
+
+def build(pcompiler_dir, rvmonitor_bin, p_spec_dir, generated_file_dir, dep_dir):
+    translate(pcompiler_dir, p_spec_dir, generated_file_dir)
+    runMonitor(rvmonitor_bin, generated_file_dir)
+    copyDep(dep_dir, generated_file_dir)
+    compileJava(generated_file_dir)
 
 def removeAll(pattern):
     for f in glob.glob(pattern):
@@ -67,28 +57,18 @@ def main():
     ext_dir = os.path.join(os.path.dirname(script_dir), "ext")
     pcompiler_dir = os.path.join(ext_dir, "P")
     rvmonitor_bin = os.path.join(ext_dir, "rv-monitor", "target", "release", "rv-monitor", "bin")
-    gen_src_dir = os.path.join(script_dir, "target", "generated-sources")
     p_spec_dir = os.path.join(script_dir, "monitor")
+    dep_dir = os.path.join(p_spec_dir, "dep")
 
-    aspectj_dir = os.path.join(gen_src_dir, "aspectJ")
-    if not os.path.exists(aspectj_dir):
-        os.makedirs(aspectj_dir)
-
-    java_dir = os.path.join(gen_src_dir, "java")
-    if not os.path.exists(java_dir):
-        os.makedirs(java_dir)
-
-    gen_monitor_dir = os.path.join(p_spec_dir, "generated")
-    if not os.path.exists(gen_monitor_dir):
-        os.makedirs(gen_monitor_dir)
+    generated_file_dir = os.path.join(p_spec_dir, "generated")
+    if not os.path.exists(generated_file_dir):
+        os.makedirs(generated_file_dir)
 
     try:
         tools.runInDirectory(
-            p_spec_dir,
-            lambda: build(pcompiler_dir, gen_monitor_dir, rvmonitor_bin, p_spec_dir, aspectj_dir, java_dir))
+            script_dir,
+            lambda: build(pcompiler_dir, rvmonitor_bin, p_spec_dir, generated_file_dir, dep_dir))
     except BaseException as e:
-        removeAll(os.path.join(aspectj_dir, "*.aj"))
-        removeAll(os.path.join(java_dir, "*.java"))
         raise e
 
 if __name__ == "__main__":
