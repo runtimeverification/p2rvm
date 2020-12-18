@@ -6,7 +6,7 @@ import shutil
 import sys
 
 if __name__ == "__main__":
-    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 import tools
 
@@ -64,7 +64,7 @@ def removeAll(pattern):
 
 def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    ext_dir = os.path.join(os.path.dirname(script_dir), "ext")
+    ext_dir = os.path.join(os.path.dirname(os.path.dirname(script_dir)), "ext")
     pcompiler_dir = os.path.join(ext_dir, "P")
     rvmonitor_bin = os.path.join(ext_dir, "rv-monitor", "target", "release", "rv-monitor", "bin")
     gen_src_dir = os.path.join(script_dir, "target", "generated-sources")

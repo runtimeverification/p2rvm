@@ -6,7 +6,7 @@ import shutil
 import sys
 
 if __name__ == "__main__":
-    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 import tools
 
@@ -23,11 +23,8 @@ def runPc(pcompiler_dir, arguments):
 
 def translate(pcompiler_dir, p_spec_dir, gen_monitor_dir):
     tools.progress("Run the PCompiler...")
-    p_spec_paths = glob.glob(os.path.join(p_spec_dir, "*.p"))
-    if len(p_spec_paths) != 1:
-        raise Exception("Expected a single p spec")
-    p_spec_path = p_spec_paths[0]
-    runPc(pcompiler_dir, [p_spec_path, "-g:RVM", "-o:%s" % gen_monitor_dir])
+    p_specs = glob.glob(os.path.join(p_spec_dir, "*.p"))
+    runPc(pcompiler_dir, p_specs + ["-g:RVM", "-o:%s" % gen_monitor_dir])
 
 def fillAspect(aspectj_dir, gen_monitor_dir):
     tools.progress("Fill in AspectJ template")
@@ -45,11 +42,9 @@ def fillAspect(aspectj_dir, gen_monitor_dir):
 def runMonitor(rvmonitor_bin, gen_monitor_dir, java_dir):
     tools.progress("Run RVMonitor")
     monitor_binary = os.path.join(rvmonitor_bin, "rv-monitor")
-    rvm_file_paths = glob.glob(os.path.join(gen_monitor_dir, "*.rvm"))
-    if len(rvm_file_paths) != 1:
-        raise Exception("Expected a single rvm spec")
-    rvm_file_path = rvm_file_paths[0]
-    tools.runNoError([monitor_binary, "-merge", rvm_file_path])
+    rvm_files = glob.glob(os.path.join(gen_monitor_dir, "*.rvm"))
+    for rvm_file in rvm_files:
+        tools.runNoError([monitor_binary, "-merge", "--controlAPI", rvm_file])
     for f in glob.glob(os.path.join(gen_monitor_dir, "*.java")):
         shutil.copy(f, java_dir)
 
@@ -64,7 +59,7 @@ def removeAll(pattern):
 
 def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    ext_dir = os.path.join(os.path.dirname(script_dir), "ext")
+    ext_dir = os.path.join(os.path.dirname(os.path.dirname(script_dir)), "ext")
     pcompiler_dir = os.path.join(ext_dir, "P")
     rvmonitor_bin = os.path.join(ext_dir, "rv-monitor", "target", "release", "rv-monitor", "bin")
     gen_src_dir = os.path.join(script_dir, "target", "generated-sources")
