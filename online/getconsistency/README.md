@@ -23,7 +23,7 @@ We give step by step instructions on how to integrate the monitor framework with
         <dependency>
             <groupId>com.runtimeverification.rvmonitor</groupId>
             <artifactId>rv-monitor-rt</artifactId>
-            <version>1.4-SNAPSHOT</version>
+            <version>1.4.0</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.mojo</groupId>
@@ -33,7 +33,7 @@ We give step by step instructions on how to integrate the monitor framework with
         <dependency>
             <groupId>p.runtime</groupId>
             <artifactId>p-runtime</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
       ```
     - In the `plugins` section, add

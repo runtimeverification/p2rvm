@@ -1,7 +1,7 @@
 The repository contains the following example:
-- [getconsistency](https://github.com/runtimeverification/p2rvm/tree/master/getconsistency) is a mock implemenation of a database and we monitor the `getConsistency` property on it.
-- [twophasecommit](https://github.com/runtimeverification/p2rvm/tree/master/twophasecommit) is a mock implementation of the two phase commit protocol and we monitor that the implementation conforms to the protocol.
-- [btm](https://github.com/runtimeverification/p2rvm/tree/master/btm) contains the bitronix implmentation of the two phase commit protocol and we monitor that the implementation conforms to the protocol.
+- [getconsistency](https://github.com/runtimeverification/p2rvm/tree/master/online/getconsistency) is a mock implemenation of a database and we monitor the `getConsistency` property on it.
+- [twophasecommit](https://github.com/runtimeverification/p2rvm/tree/master/online/twophasecommit) is a mock implementation of the two phase commit protocol and we monitor that the implementation conforms to the protocol.
+- [btm](https://github.com/runtimeverification/p2rvm/tree/master/online/btm) contains the bitronix implmentation of the two phase commit protocol and we monitor that the implementation conforms to the protocol.
 
 Each example directory is a maven project. In each example directory:
 - The `gen_monitor.py` is in charge of generating the instrumentation code and the monitor code.
@@ -30,4 +30,4 @@ $ mvn clean install
 ```
 
 ## Integration
-For detailed information on how to integrate the monitoring framework with maven, please refer to the [README.md](https://github.com/runtimeverification/p2rvm/blob/master/getconsistency/README.md) in the `getconsistency` folder.
+For detailed information on how to integrate the monitoring framework with maven, please refer to the [README.md](https://github.com/runtimeverification/p2rvm/blob/master/online/getconsistency/README.md) in the `getconsistency` folder.
